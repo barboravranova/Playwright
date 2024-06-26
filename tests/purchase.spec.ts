@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test';
 
+
 test.beforeEach(async ({ page }) => {
     await page.goto("https://www.saucedemo.com/");
     await expect(page.locator(".login_logo")).toHaveText("Swag Labs");
@@ -11,33 +12,48 @@ test.beforeEach(async ({ page }) => {
 });
 
 test('purchase test', async ({ page }) => {
-    await expect(page.getByRole('img', { name: 'Sauce Labs Fleece Jacket' })).toBeVisible();
-    const imageSrc = await page.getByRole('img', { name: 'Sauce Labs Fleece Jacket' }).getAttribute('src');
-    await expect(imageSrc).toContain('/static/media/sauce-pullover-1200x1500.51d7ffaf.jpg');
+    const productImage = page.getByRole('img', { name: 'Sauce Labs Fleece Jacket' });
+    await expect(productImage).toBeVisible();
+    const productImageSrc = await productImage.getAttribute('src');
+    await expect(productImageSrc).toContain('/static/media/sauce-pullover-1200x1500.51d7ffaf.jpg');
 
-    await expect(page.locator("#add-to-cart-sauce-labs-fleece-jacket")).toHaveText("Add to cart");
-    await page.locator("#add-to-cart-sauce-labs-fleece-jacket").click();
-    await expect(page.locator("#remove-sauce-labs-fleece-jacket")).toHaveText("Remove");
+    const addToCartButton = page.locator('[data-test="add-to-cart-sauce-labs-fleece-jacket"]');
+    await expect(addToCartButton).toHaveText("Add to cart");
+    await addToCartButton.click();
 
-    await page.locator('[data-test="shopping-cart-badge"]').click();
+    const removeButton = page.locator('[data-test="remove-sauce-labs-fleece-jacket"]');
+    await expect(removeButton).toHaveText("Remove");
+    await removeButton.click();
+    await expect(addToCartButton).toHaveText("Add to cart");
+
+    await addToCartButton.click();
+
+    const cartBadge = page.locator('[data-test="shopping-cart-badge"]');
+    await expect(cartBadge).toHaveText("1");
+    await cartBadge.click();
 
     await expect(page).toHaveURL("https://www.saucedemo.com/cart.html");
     await expect(page.locator('[data-test="title"]')).toHaveText('Your Cart');
 
-    await expect(page.locator('.inventory_item_name')).toHaveCount(1);
-    await expect(page.locator('.inventory_item_name')).toHaveText('Sauce Labs Fleece Jacket');
+    const cartItemName = page.locator('[data-test="inventory-item-name"]')
+    await expect(cartItemName).toHaveCount(1);
+    await expect(cartItemName).toHaveText('Sauce Labs Fleece Jacket');
 
-    await page.locator('[data-test="checkout"]').click();
+    const checkoutButton = page.getByRole('button', { name: 'Checkout' });
+    await expect(checkoutButton).toHaveText('Checkout');
+    await checkoutButton.click();
 
     await expect(page).toHaveURL("https://www.saucedemo.com/checkout-step-one.html");
     await expect(page.locator('[data-test="title"]')).toHaveText('Checkout: Your Information');
 
-    await page.locator('[data-test="firstName"]').fill("Jan");
-    await page.locator('[data-test="lastName"]').fill("Marek");
-    await page.locator('[data-test="postalCode"]').fill("12345");
+    await page.getByPlaceholder('First Name').fill('Jan');
+    await page.getByPlaceholder('Last Name').fill('Marek');
+    await page.getByPlaceholder('Zip/Postal Code').fill('12345');
 
-    await page.locator('[data-test="continue"]').click();
+    const continueButton = page.getByRole('button', { name: 'Continue' });
+    await expect(continueButton).toHaveText('Continue');
+    await continueButton.click();
 
     await expect(page).toHaveURL("https://www.saucedemo.com/checkout-step-two.html");
-    await expect(page.locator('[data-test="title"]')).toHaveText('Checkout: Overview');
+    await expect(page.locator('[data-test="title"]')).toHaveText('Checkout: Overview');   
 });
