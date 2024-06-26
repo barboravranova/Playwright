@@ -17,6 +17,12 @@ test('purchase test', async ({ page }) => {
     const productImageSrc = await productImage.getAttribute('src');
     await expect(productImageSrc).toContain('/static/media/sauce-pullover-1200x1500.51d7ffaf.jpg');
 
+    const productPriceText = await page.locator('.inventory_item:has-text("Sauce Labs Fleece Jacket") [data-test="inventory-item-price"]').textContent();
+    if (productPriceText === null) {
+        throw new Error('Cena produktu nebyla nalezena.');
+    }
+    const productPrice = parseFloat(productPriceText.replace('$', ''));
+
     const addToCartButton = page.locator('[data-test="add-to-cart-sauce-labs-fleece-jacket"]');
     await expect(addToCartButton).toHaveText("Add to cart");
     await addToCartButton.click();
@@ -56,6 +62,13 @@ test('purchase test', async ({ page }) => {
 
     await expect(page).toHaveURL("https://www.saucedemo.com/checkout-step-two.html");
     await expect(page.locator('[data-test="title"]')).toHaveText('Checkout: Overview');   
+
+    const totalPriceText = await page.locator('[data-test="subtotal-label"]').textContent();
+    if (totalPriceText === null) {
+      throw new Error('Součet ceny produktů nebyl nalezen.');
+    }
+    const totalPrice = parseFloat(totalPriceText.replace('Item total: $', ''));
+    expect(totalPrice).toBe(productPrice);
 
     const finishButton = page.getByRole('button', { name: 'Finish' });
     await expect(finishButton).toHaveText('Finish');
