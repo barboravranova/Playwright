@@ -56,4 +56,19 @@ test('purchase test', async ({ page }) => {
 
     await expect(page).toHaveURL("https://www.saucedemo.com/checkout-step-two.html");
     await expect(page.locator('[data-test="title"]')).toHaveText('Checkout: Overview');   
+
+    const finishButton = page.getByRole('button', { name: 'Finish' });
+    await expect(finishButton).toHaveText('Finish');
+    await finishButton.click();
+
+    await expect(page).toHaveURL("https://www.saucedemo.com/checkout-complete.html");
+    await expect(page.locator('[data-test="title"]')).toHaveText('Checkout: Complete!');
+    await expect(page.getByText('Thank you for your order!')).toBeVisible();
+
+    await page.getByRole('button', { name: 'Open Menu' }).click()
+    await expect(page.getByRole('navigation')).toBeVisible();
+    await page.getByRole('link', { name: 'Logout' }).click();
+
+    await expect(page).toHaveURL('https://www.saucedemo.com/');
+    await expect(page.getByRole('button', { name: 'Login' })).toBeVisible();
 });
