@@ -1,88 +1,100 @@
 import { test, expect } from '@playwright/test';
 
-test.beforeEach(async ({ page }) => {
-    await page.goto("https://www.saucedemo.com/");
-    await expect(page.locator(".login_logo")).toHaveText("Swag Labs");
 
-    await page.getByPlaceholder('Username').fill('Jan');
-    await page.getByPlaceholder('Password').fill('Marek');
+const users = [
+    { username: 'standard_user', password: 'secret_sauce' },
+    { username: 'locked_out_user', password: 'secret_sauce' },
+    { username: 'problem_user', password: 'secret_sauce' },
+    { username: 'performance_glitch_user', password: 'secret_sauce' },
+];
 
-    await page.getByRole('button', { name: 'Login' }).click();
+users.forEach(user => {
+    test.describe(`Test with user: ${user.username}`, () => {
+        test.beforeEach(async ({ page }) => {
+            await page.goto("https://www.saucedemo.com/");
+            await expect(page.locator(".login_logo")).toHaveText("Swag Labs");
 
-    await expect(page).toHaveURL("https://www.saucedemo.com/inventory.html");
-});
+            await page.getByPlaceholder('Username').fill(user.username);
+            await page.getByPlaceholder('Password').fill(user.password);
 
-test('purchase test', async ({ page }) => {
-    const productImage = page.getByRole('img', { name: 'Sauce Labs Fleece Jacket' });
-    await expect(productImage).toBeVisible();
-    const productImageSrc = await productImage.getAttribute('src');
-    await expect(productImageSrc).toContain('/static/media/sauce-pullover-1200x1500.51d7ffaf.jpg');
+            await page.getByRole('button', { name: 'Login' }).click();
 
-    const productPriceText = await page.locator('.inventory_item:has-text("Sauce Labs Fleece Jacket") [data-test="inventory-item-price"]').textContent();
-    if (productPriceText === null) {
-        throw new Error('Cena produktu nebyla nalezena.');
-    }
-    const productPrice = parseFloat(productPriceText.replace('$', ''));
+            await expect(page).toHaveURL("https://www.saucedemo.com/inventory.html");
+        });
 
-    const addToCartButton = page.locator('[data-test="add-to-cart-sauce-labs-fleece-jacket"]');
-    await expect(addToCartButton).toHaveText("Add to cart");
-    await addToCartButton.click();
+        test('purchase test', async ({ page }) => {
+            const productImage = page.getByRole('img', { name: 'Sauce Labs Fleece Jacket' });
+            await expect(productImage).toBeVisible();
+            const productImageSrc = await productImage.getAttribute('src');
+            await expect(productImageSrc).toContain('/static/media/sauce-pullover-1200x1500.51d7ffaf.jpg');
 
-    const removeButton = page.locator('[data-test="remove-sauce-labs-fleece-jacket"]');
-    await expect(removeButton).toHaveText("Remove");
-    await removeButton.click();
-    await expect(addToCartButton).toHaveText("Add to cart");
+            const productPriceText = await page.locator('.inventory_item:has-text("Sauce Labs Fleece Jacket") [data-test="inventory-item-price"]').textContent();
+            if (productPriceText === null) {
+                throw new Error('Cena produktu nebyla nalezena.');
+            }
+            const productPrice = parseFloat(productPriceText.replace('$', ''));
 
-    await addToCartButton.click();
+            const addToCartButton = page.locator('[data-test="add-to-cart-sauce-labs-fleece-jacket"]');
+            await expect(addToCartButton).toHaveText("Add to cart");
+            await addToCartButton.click();
 
-    const cartBadge = page.locator('[data-test="shopping-cart-badge"]');
-    await expect(cartBadge).toHaveText("1");
-    await cartBadge.click();
+            const removeButton = page.locator('[data-test="remove-sauce-labs-fleece-jacket"]');
+            await expect(removeButton).toHaveText("Remove");
+            await removeButton.click();
+            await expect(addToCartButton).toHaveText("Add to cart");
 
-    await expect(page).toHaveURL("https://www.saucedemo.com/cart.html");
-    await expect(page.locator('[data-test="title"]')).toHaveText('Your Cart');
+            await addToCartButton.click();
 
-    const cartItemName = page.locator('[data-test="inventory-item-name"]')
-    await expect(cartItemName).toHaveCount(1);
-    await expect(cartItemName).toHaveText('Sauce Labs Fleece Jacket');
+            const cartBadge = page.locator('[data-test="shopping-cart-badge"]');
+            await expect(cartBadge).toHaveText("1");
+            await cartBadge.click();
 
-    const checkoutButton = page.getByRole('button', { name: 'Checkout' });
-    await expect(checkoutButton).toHaveText('Checkout');
-    await checkoutButton.click();
+            await expect(page).toHaveURL("https://www.saucedemo.com/cart.html");
+            await expect(page.locator('[data-test="title"]')).toHaveText('Your Cart');
 
-    await expect(page).toHaveURL("https://www.saucedemo.com/checkout-step-one.html");
-    await expect(page.locator('[data-test="title"]')).toHaveText('Checkout: Your Information');
+            const cartItemName = page.locator('[data-test="inventory-item-name"]')
+            await expect(cartItemName).toHaveCount(1);
+            await expect(cartItemName).toHaveText('Sauce Labs Fleece Jacket');
 
-    await page.getByPlaceholder('First Name').fill('Jan');
-    await page.getByPlaceholder('Last Name').fill('Marek');
-    await page.getByPlaceholder('Zip/Postal Code').fill('12345');
+            const checkoutButton = page.getByRole('button', { name: 'Checkout' });
+            await expect(checkoutButton).toHaveText('Checkout');
+            await checkoutButton.click();
 
-    const continueButton = page.getByRole('button', { name: 'Continue' });
-    await expect(continueButton).toHaveText('Continue');
-    await continueButton.click();
+            await expect(page).toHaveURL("https://www.saucedemo.com/checkout-step-one.html");
+            await expect(page.locator('[data-test="title"]')).toHaveText('Checkout: Your Information');
 
-    await expect(page).toHaveURL("https://www.saucedemo.com/checkout-step-two.html");
-    await expect(page.locator('[data-test="title"]')).toHaveText('Checkout: Overview');   
+            await page.getByPlaceholder('First Name').fill('Jan');
+            await page.getByPlaceholder('Last Name').fill('Marek');
+            await page.getByPlaceholder('Zip/Postal Code').fill('12345');
 
-    const totalPriceText = await page.locator('[data-test="subtotal-label"]').textContent();
-    if (totalPriceText === null) {
-      throw new Error('Součet ceny produktů nebyl nalezen.');
-    }
-    const totalPrice = parseFloat(totalPriceText.replace('Item total: $', ''));
-    expect(totalPrice).toBe(productPrice);
+            const continueButton = page.getByRole('button', { name: 'Continue' });
+            await expect(continueButton).toHaveText('Continue');
+            await continueButton.click();
 
-    const finishButton = page.getByRole('button', { name: 'Finish' });
-    await expect(finishButton).toHaveText('Finish');
-    await finishButton.click();
+            await expect(page).toHaveURL("https://www.saucedemo.com/checkout-step-two.html");
+            await expect(page.locator('[data-test="title"]')).toHaveText('Checkout: Overview');
 
-    await expect(page).toHaveURL("https://www.saucedemo.com/checkout-complete.html");
-    await expect(page.locator('[data-test="title"]')).toHaveText('Checkout: Complete!');
-    await expect(page.getByText('Thank you for your order!')).toBeVisible();
+            const totalPriceText = await page.locator('[data-test="subtotal-label"]').textContent();
+            if (totalPriceText === null) {
+                throw new Error('Součet ceny produktů nebyl nalezen.');
+            }
+            const totalPrice = parseFloat(totalPriceText.replace('Item total: $', ''));
+            expect(totalPrice).toBe(productPrice);
 
-    await page.getByRole('button', { name: 'Open Menu' }).click()
-    await expect(page.getByRole('navigation')).toBeVisible();
-    await page.getByRole('link', { name: 'Logout' }).click();
+            const finishButton = page.getByRole('button', { name: 'Finish' });
+            await expect(finishButton).toHaveText('Finish');
+            await finishButton.click();
 
-    await expect(page).toHaveURL('https://www.saucedemo.com/');
-    await expect(page.getByRole('button', { name: 'Login' })).toBeVisible();
+            await expect(page).toHaveURL("https://www.saucedemo.com/checkout-complete.html");
+            await expect(page.locator('[data-test="title"]')).toHaveText('Checkout: Complete!');
+            await expect(page.getByText('Thank you for your order!')).toBeVisible();
+
+            await page.getByRole('button', { name: 'Open Menu' }).click()
+            await expect(page.getByRole('navigation')).toBeVisible();
+            await page.getByRole('link', { name: 'Logout' }).click();
+
+            await expect(page).toHaveURL('https://www.saucedemo.com/');
+            await expect(page.getByRole('button', { name: 'Login' })).toBeVisible();
+        });
+    });
 });
