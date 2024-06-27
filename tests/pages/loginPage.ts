@@ -12,7 +12,7 @@ export class LoginPage {
         this.passwordInput = page.getByPlaceholder('Password');
         this.loginButton = page.getByRole('button', { name: 'Login' });
     }
-    async goto() {
+    async goTo() {
         await this.page.goto('https://www.saucedemo.com/');
         await expect(this.page.locator('.login_logo')).toHaveText('Swag Labs');
     }
