@@ -5,9 +5,11 @@ export class LoginPage {
     readonly usernameInput: Locator;
     readonly passwordInput: Locator;
     readonly loginButton: Locator;
+    readonly title: Locator;
 
     constructor(page: Page) {
         this.page = page;
+        this.title = page.locator('[data-test="title"]');
         this.usernameInput = page.getByPlaceholder('Username');
         this.passwordInput = page.getByPlaceholder('Password');
         this.loginButton = page.getByRole('button', { name: 'Login' });

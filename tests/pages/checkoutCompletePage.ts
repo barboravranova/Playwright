@@ -1,11 +1,11 @@
 import { expect, type Locator, type Page } from '@playwright/test';
 
 export class CheckoutCompletePage {
-    private page: Page;
-    private openMenuButton: Locator;
-    private navigationMenu: Locator;
-    private logoutLink: Locator;
-    private title: Locator;
+    readonly  page: Page;
+    readonly  openMenuButton: Locator;
+    readonly  navigationMenu: Locator;
+    readonly  logoutLink: Locator;
+    readonly  title: Locator;
 
     constructor(page: Page) {
         this.page = page;

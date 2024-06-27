@@ -7,7 +7,7 @@ export class InventoryPage {
     readonly addToCartButton: Locator;
     readonly cartBadge: Locator;
     readonly removeButton: Locator;
-    private title: Locator;
+    readonly title: Locator;
 
     constructor(page: Page) {
         this.page = page;
