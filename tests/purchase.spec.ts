@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { LoginPage } from './pages/loginPage';
 
 
 const users = [
@@ -11,15 +12,9 @@ const users = [
 users.forEach(user => {
     test.describe(`Test with user: ${user.username}`, () => {
         test.beforeEach(async ({ page }) => {
-            await page.goto("https://www.saucedemo.com/");
-            await expect(page.locator(".login_logo")).toHaveText("Swag Labs");
-
-            await page.getByPlaceholder('Username').fill(user.username);
-            await page.getByPlaceholder('Password').fill(user.password);
-
-            await page.getByRole('button', { name: 'Login' }).click();
-
-            await expect(page).toHaveURL("https://www.saucedemo.com/inventory.html");
+            const loginPage = new LoginPage(page);
+            loginPage.goto();
+            loginPage.login(user.username, user.password);
         });
 
         test('purchase test', async ({ page }) => {
