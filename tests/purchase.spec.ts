@@ -2,7 +2,9 @@ import { test, expect } from '@playwright/test';
 import { LoginPage } from './pages/loginPage';
 import { InventoryPage } from './pages/invertoryPage';
 import { CartPage } from './pages/cartPage';
-import { CheckoutPage } from './pages/checkoutPage';
+import { CheckoutStepOnePage } from './pages/checkoutStepOnePage';
+import { CheckoutStepTwoPage } from './pages/checkoutStepTwoPage';
+import { CheckoutCompletePage } from './pages/checkoutCompletePage';
 
 
 const users = [
@@ -24,7 +26,7 @@ users.forEach(user => {
             const inventoryPage = new InventoryPage(page);
             await inventoryPage.verifyProductImage()
 
-            const productPrice = inventoryPage.verifyProductImage();
+            const productPrice = await inventoryPage.getProductPrice();
             await inventoryPage.addItemToCart();
 
             await inventoryPage.removeItem();
@@ -36,37 +38,23 @@ users.forEach(user => {
             const cartPage = new CartPage(page);
             await cartPage.verifyCartItem(1, 'Sauce Labs Fleece Jacket');
 
-            cartPage.goToCheckout();
+            await cartPage.goToCheckout();
 
-            const checkoutPage = new CheckoutPage(page);
+            const checkoutStepOnePage = new CheckoutStepOnePage(page);
 
-            checkoutPage.verifyOnCheckoutPage();
-            checkoutPage.fillInformationAndContinue("Jan", "Test", "12345");
+            await checkoutStepOnePage.verifyOnCheckoutPage();
+            await checkoutStepOnePage.fillInformationAndContinue("Jan", "Test", "12345");
 
-            await expect(page).toHaveURL("https://www.saucedemo.com/checkout-step-two.html");
-            await expect(page.locator('[data-test="title"]')).toHaveText('Checkout: Overview');
+            const checkoutStepTwoPage = new CheckoutStepTwoPage(page);
+            await checkoutStepTwoPage.checkoutStepTwoPage();
+            const totalPrice = await checkoutStepTwoPage.getTotalPrice();
+            expect(totalPrice).toBe(productPrice);
+            await checkoutStepTwoPage.finishCheckout();
 
-            /*const totalPriceText = await page.locator('[data-test="subtotal-label"]').textContent();
-            if (totalPriceText === null) {
-                throw new Error('Součet ceny produktů nebyl nalezen.');
-            }
-            const totalPrice = parseFloat(totalPriceText.replace('Item total: $', ''));
-            expect(totalPrice).toBe(productPrice);*/
-
-            const finishButton = page.getByRole('button', { name: 'Finish' });
-            await expect(finishButton).toHaveText('Finish');
-            await finishButton.click();
-
-            await expect(page).toHaveURL("https://www.saucedemo.com/checkout-complete.html");
-            await expect(page.locator('[data-test="title"]')).toHaveText('Checkout: Complete!');
-            await expect(page.getByText('Thank you for your order!')).toBeVisible();
-
-            await page.getByRole('button', { name: 'Open Menu' }).click()
-            await expect(page.getByRole('navigation')).toBeVisible();
-            await page.getByRole('link', { name: 'Logout' }).click();
-
-            await expect(page).toHaveURL('https://www.saucedemo.com/');
-            await expect(page.getByRole('button', { name: 'Login' })).toBeVisible();
+            const checkoutCompletePage = new CheckoutCompletePage(page);
+            await checkoutCompletePage.checkoutCompletePage();
+            await checkoutCompletePage.openMenu();
+            await checkoutCompletePage.logout();          
         });
     });
 });

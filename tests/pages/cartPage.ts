@@ -12,18 +12,17 @@ export class CartPage {
         this.checkoutButton = page.getByRole('button', { name: 'Checkout' });
     }
 
-    async verifyOnCartPage() {
+    async verifyOnCartPage(): Promise<void> {
         await expect(this.page).toHaveURL('https://www.saucedemo.com/cart.html');
         await expect(this.title).toHaveText('Your Cart');
     }
 
-    async verifyCartItem(expectedItemsNumber: number, expectedItemName: string)
-    {
+    async verifyCartItem(expectedItemsNumber: number, expectedItemName: string): Promise<void> {
         await expect(this.cartItemName).toHaveCount(expectedItemsNumber);
         await expect(this.cartItemName).toHaveText(expectedItemName);
     }
 
-    async goToCheckout() {
+    async goToCheckout(): Promise<void> {
         await this.checkoutButton.click();
         await expect(this.page).toHaveURL('https://www.saucedemo.com/checkout-step-one.html');
     }

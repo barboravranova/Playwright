@@ -1,6 +1,6 @@
 import { expect, type Locator, type Page } from '@playwright/test';
 
-export class CheckoutPage {
+export class CheckoutStepOnePage {
     private page: Page;
     private firstNameInput: Locator;
     private lastNameInput: Locator;
@@ -17,12 +17,12 @@ export class CheckoutPage {
         this.title = page.locator('[data-test="title"]');
     }
 
-    async verifyOnCheckoutPage() {
+    async verifyOnCheckoutPage(): Promise<void> {
         await expect(this.page).toHaveURL('https://www.saucedemo.com/checkout-step-one.html');
         await expect(this.title).toHaveText('Checkout: Your Information');
     }
 
-    async fillInformationAndContinue(firstName: string, lastName: string, postalCode: string) {
+    async fillInformationAndContinue(firstName: string, lastName: string, postalCode: string): Promise<void> {
         await this.firstNameInput.fill(firstName);
         await this.lastNameInput.fill(lastName);
         await this.postalCodeInput.fill(postalCode);

@@ -12,12 +12,13 @@ export class LoginPage {
         this.passwordInput = page.getByPlaceholder('Password');
         this.loginButton = page.getByRole('button', { name: 'Login' });
     }
-    async goTo() {
+
+    async goTo(): Promise<void> {
         await this.page.goto('https://www.saucedemo.com/');
         await expect(this.page.locator('.login_logo')).toHaveText('Swag Labs');
     }
 
-    async login(username: string, password: string) {
+    async login(username: string, password: string): Promise<void> {
         await this.usernameInput.fill(username);
         await this.passwordInput.fill(password);
         await this.loginButton.click();

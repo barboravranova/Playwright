@@ -19,18 +19,18 @@ export class InventoryPage {
 
     }
 
-    async verifyOnInvertoryPage() {
+    async verifyOnInvertoryPage(): Promise<void> {
         await expect(this.page).toHaveURL('https://www.saucedemo.com/inventory.html');
         await expect(this.title).toHaveText('Products');
     }
 
-    async verifyProductImage() {
+    async verifyProductImage(): Promise<void> {
         await expect(this.productImage).toBeVisible();
         const productImageSrc = await this.productImage.getAttribute('src');
         expect(productImageSrc).toContain('/static/media/sauce-pullover-1200x1500.51d7ffaf.jpg');
     }
 
-    async getProductPrice() {
+    async getProductPrice(): Promise<number> {
         const priceText = await this.productPrice.textContent();
         if (priceText === null) {
             throw new Error('Cena produktu nebyla nalezena.');
@@ -38,25 +38,22 @@ export class InventoryPage {
         return parseFloat(priceText.replace('$', ''));
     }
 
-    async addItemToCart() {
+    async addItemToCart(): Promise<void> {
         await expect(this.addToCartButton).toHaveText('Add to cart');
         await this.addToCartButton.click();
         await expect(this.removeButton).toHaveText("Remove");
     }
 
-    async removeItem()
-    {
+    async removeItem(): Promise<void> {
         await this.removeButton.click();
         await expect(this.addToCartButton).toHaveText("Add to cart");
     }
 
-    async verifyCartBadge(expectedItemsNumber: string)
-    {
+    async verifyCartBadge(expectedItemsNumber: string): Promise<void> {
         await expect(this.cartBadge).toHaveText(expectedItemsNumber);
     }
 
-    async goToCart()
-    {
+    async goToCart(): Promise<void> {
         await this.cartBadge.click();
         await expect(this.page).toHaveURL('https://www.saucedemo.com/cart.html');
     }
