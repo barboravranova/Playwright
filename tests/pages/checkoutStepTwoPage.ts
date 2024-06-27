@@ -1,10 +1,10 @@
 import { expect, type Locator, type Page } from '@playwright/test';
 
 export class CheckoutStepTwoPage {
-    private page: Page;
-    private finishButton: Locator;
-    private totalPriceLabel: Locator;
-    private title: Locator;
+    readonly  page: Page;
+    readonly  finishButton: Locator;
+    readonly  totalPriceLabel: Locator;
+    readonly  title: Locator;
 
     constructor(page: Page) {
         this.page = page;

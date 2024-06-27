@@ -4,7 +4,7 @@ export class CartPage {
     readonly page: Page;
     readonly cartItemName: Locator;
     readonly checkoutButton: Locator;
-    private title: Locator;
+    readonly  title: Locator;
 
     constructor(page: Page) {
         this.page = page;
