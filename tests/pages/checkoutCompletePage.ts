@@ -9,13 +9,13 @@ export class CheckoutCompletePage {
 
     constructor(page: Page) {
         this.page = page;
+        this.title = page.locator('[data-test="title"]');
         this.openMenuButton = page.getByRole('button', { name: 'Open Menu' });
         this.navigationMenu = page.getByRole('navigation');
         this.logoutLink = page.getByRole('link', { name: 'Logout' });
-        this.title = page.locator('[data-test="title"]');
     }
 
-    async checkoutCompletePage(): Promise<void>  {
+    async verifyCheckoutCompletePage(): Promise<void>  {
         await expect(this.page).toHaveURL('https://www.saucedemo.com/checkout-complete.html');
         await expect(this.title).toHaveText('Checkout: Complete!');
         await expect(this.page.getByText('Thank you for your order!')).toBeVisible();

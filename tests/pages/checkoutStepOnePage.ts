@@ -10,14 +10,14 @@ export class CheckoutStepOnePage {
 
     constructor(page: Page) {
         this.page = page;
+        this.title = page.locator('[data-test="title"]');
         this.firstNameInput = page.getByPlaceholder('First Name');
         this.lastNameInput = page.getByPlaceholder('Last Name');
         this.postalCodeInput = page.getByPlaceholder('Zip/Postal Code');
         this.continueButton = page.getByRole('button', { name: 'Continue' });
-        this.title = page.locator('[data-test="title"]');
     }
 
-    async verifyOnCheckoutPage(): Promise<void> {
+    async verifyCheckoutStepOnePage(): Promise<void> {
         await expect(this.page).toHaveURL('https://www.saucedemo.com/checkout-step-one.html');
         await expect(this.title).toHaveText('Checkout: Your Information');
     }

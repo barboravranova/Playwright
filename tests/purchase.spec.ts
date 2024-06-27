@@ -24,35 +24,32 @@ users.forEach(user => {
 
         test('purchase test', async ({ page }) => {
             const inventoryPage = new InventoryPage(page);
-            await inventoryPage.verifyProductImage()
-
+            await inventoryPage.verifyInvertoryPage();
+            await inventoryPage.verifyProductImage();
             const productPrice = await inventoryPage.getProductPrice();
             await inventoryPage.addItemToCart();
-
             await inventoryPage.removeItem();
-
             await inventoryPage.addItemToCart();
             await inventoryPage.verifyCartBadge("1");
             await inventoryPage.goToCart();
 
             const cartPage = new CartPage(page);
+            await cartPage.verifyCartPage();
             await cartPage.verifyCartItem(1, 'Sauce Labs Fleece Jacket');
-
             await cartPage.goToCheckout();
 
             const checkoutStepOnePage = new CheckoutStepOnePage(page);
-
-            await checkoutStepOnePage.verifyOnCheckoutPage();
+            await checkoutStepOnePage.verifyCheckoutStepOnePage();
             await checkoutStepOnePage.fillInformationAndContinue("Jan", "Test", "12345");
 
             const checkoutStepTwoPage = new CheckoutStepTwoPage(page);
-            await checkoutStepTwoPage.checkoutStepTwoPage();
+            await checkoutStepTwoPage.verifyCheckoutStepTwoPage();
             const totalPrice = await checkoutStepTwoPage.getTotalPrice();
             expect(totalPrice).toBe(productPrice);
             await checkoutStepTwoPage.finishCheckout();
 
             const checkoutCompletePage = new CheckoutCompletePage(page);
-            await checkoutCompletePage.checkoutCompletePage();
+            await checkoutCompletePage.verifyCheckoutCompletePage();
             await checkoutCompletePage.openMenu();
             await checkoutCompletePage.logout();          
         });

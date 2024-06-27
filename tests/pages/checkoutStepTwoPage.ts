@@ -13,7 +13,7 @@ export class CheckoutStepTwoPage {
         this.totalPriceLabel = page.locator('[data-test="subtotal-label"]');
     }
 
-    async checkoutStepTwoPage(): Promise<void> {
+    async verifyCheckoutStepTwoPage(): Promise<void> {
         await expect(this.page).toHaveURL('https://www.saucedemo.com/checkout-step-two.html');
         await expect(this.title).toHaveText('Checkout: Overview');
     }

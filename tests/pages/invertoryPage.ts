@@ -11,15 +11,15 @@ export class InventoryPage {
 
     constructor(page: Page) {
         this.page = page;
+        this.title = page.locator('[data-test="title"]');
         this.productImage = page.getByRole('img', { name: 'Sauce Labs Fleece Jacket' });
         this.productPrice = page.locator('.inventory_item:has-text("Sauce Labs Fleece Jacket") [data-test="inventory-item-price"]');
         this.addToCartButton = page.locator('[data-test="add-to-cart-sauce-labs-fleece-jacket"]');
         this.cartBadge = page.locator('[data-test="shopping-cart-badge"]');
         this.removeButton = page.locator('[data-test="remove-sauce-labs-fleece-jacket"]');
-
     }
 
-    async verifyOnInvertoryPage(): Promise<void> {
+    async verifyInvertoryPage(): Promise<void> {
         await expect(this.page).toHaveURL('https://www.saucedemo.com/inventory.html');
         await expect(this.title).toHaveText('Products');
     }
