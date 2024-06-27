@@ -5,19 +5,21 @@ export class LoginPage {
     readonly usernameInput: Locator;
     readonly passwordInput: Locator;
     readonly loginButton: Locator;
-    readonly title: Locator;
 
     constructor(page: Page) {
         this.page = page;
-        this.title = page.locator('[data-test="title"]');
         this.usernameInput = page.getByPlaceholder('Username');
         this.passwordInput = page.getByPlaceholder('Password');
         this.loginButton = page.getByRole('button', { name: 'Login' });
     }
 
+    async verifyLoginPage(): Promise<void> {
+        await expect(this.page).toHaveURL('https://www.saucedemo.com/');
+        await expect(this.loginButton).toBeVisible();
+    }
+
     async goTo(): Promise<void> {
         await this.page.goto('https://www.saucedemo.com/');
-        await expect(this.page.locator('.login_logo')).toHaveText('Swag Labs');
     }
 
     async login(username: string, password: string): Promise<void> {

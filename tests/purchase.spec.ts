@@ -19,6 +19,7 @@ users.forEach(user => {
         test.beforeEach(async ({ page }) => {
             const loginPage = new LoginPage(page);
             await loginPage.goTo();
+            await loginPage.verifyLoginPage();
             await loginPage.login(user.username, user.password);
         });
 
@@ -30,7 +31,7 @@ users.forEach(user => {
             await inventoryPage.addItemToCart();
             await inventoryPage.removeItem();
             await inventoryPage.addItemToCart();
-            await inventoryPage.verifyCartBadge("1");
+            await inventoryPage.verifyCartBadge('1');
             await inventoryPage.goToCart();
 
             const cartPage = new CartPage(page);
@@ -40,7 +41,7 @@ users.forEach(user => {
 
             const checkoutStepOnePage = new CheckoutStepOnePage(page);
             await checkoutStepOnePage.verifyCheckoutStepOnePage();
-            await checkoutStepOnePage.fillInformationAndContinue("Jan", "Test", "12345");
+            await checkoutStepOnePage.fillInformationAndContinue('Jan', 'Test', '12345');
 
             const checkoutStepTwoPage = new CheckoutStepTwoPage(page);
             await checkoutStepTwoPage.verifyCheckoutStepTwoPage();
@@ -51,7 +52,10 @@ users.forEach(user => {
             const checkoutCompletePage = new CheckoutCompletePage(page);
             await checkoutCompletePage.verifyCheckoutCompletePage();
             await checkoutCompletePage.openMenu();
-            await checkoutCompletePage.logout();          
+            await checkoutCompletePage.logout();        
+            
+            const loginPage = new LoginPage(page);
+            await loginPage.verifyLoginPage();
         });
     });
 });
