@@ -27,7 +27,7 @@ export class InventoryPage {
     async verifyProductImage(): Promise<void> {
         await expect(this.productImage).toBeVisible();
         const productImageSrc = await this.productImage.getAttribute('src');
-        expect(productImageSrc).toContain('/static/media/sauce-pullover-1200x1500.51d7ffaf.jpg');
+        expect.soft(productImageSrc).toContain('/static/media/sauce-pullover-1200x1500.51d7ffaf.jpg');
     }
 
     async getProductPrice(): Promise<number> {
